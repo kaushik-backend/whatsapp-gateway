@@ -1,6 +1,8 @@
 node_modules/
 .env
+.env.example
 dist/
+
 coverage/
 .nyc_output/
 *.log

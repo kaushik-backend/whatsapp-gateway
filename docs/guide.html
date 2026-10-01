@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp API Gateway & AI Chat Support System — Architecture & Flow Specification</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+    :root {
+      --primary: #128C7E;
+      --primary-dark: #075E54;
+      --accent: #25D366;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --bg-code: #f3f4f6;
+      --border: #e5e7eb;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 13.5px;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .cover {
+      page-break-after: always;
+      padding: 60px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 85vh;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: var(--primary-dark);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #111827;
+      margin: 0 0 16px 0;
+      line-height: 1.25;
+    }
+    .cover .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 40px auto;
+      line-height: 1.6;
+    }
+    .meta-box {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 24px;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: left;
+      font-size: 12px;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    .meta-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .meta-value {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Content styling */
+    h2 {
+      font-size: 20px;
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+      margin-top: 36px;
+      margin-bottom: 14px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 15px;
+      color: #111827;
+      margin-top: 22px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+    p, ul, ol {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 12px;
+      background: var(--bg-code);
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #b91c1c;
+    }
+    pre {
+      background: #111827;
+      color: #f3f4f6;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      line-height: 1.45;
+      page-break-inside: avoid;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 12px;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 700;
+      color: #111827;
+    }
+    tr:nth-child(even) {
+      background: #fcfcfc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .badge-info { background: #e0f2fe; color: #0369a1; }
+    
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: #f0fdf4;
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+    }
+    .callout-warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+    .callout-danger {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .flow-step {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+    .flow-step-num {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div>
+      <span class="cover-badge">ENTERPRISE TECHNICAL SPECIFICATION</span>
+      <h1>WhatsApp API Gateway &amp;<br>AI Chat Support System</h1>
+      <p class="subtitle">
+        Architectural Deep Dive, Queue Concurrency Engine, Technology Trade-Off Analysis, Multi-Tier Anti-Ban Engine, and Complete REST / Webhook API Reference.
+      </p>
+    </div>
+
+    <div class="meta-box">
+      <div class="meta-row"><span class="meta-label">Architecture Style:</span><span class="meta-value">Transactional Outbox + Async Event-Driven</span></div>
+      <div class="meta-row"><span class="meta-label">Queue Technology:</span><span class="meta-value">PostgreSQL (FOR UPDATE SKIP LOCKED)</span></div>
+      <div class="meta-row"><span class="meta-label">Vector Storage:</span><span class="meta-value">PostgreSQL + pgvector (768 Dimensions)</span></div>
+      <div class="meta-row"><span class="meta-label">AI Engine:</span><span class="meta-value">Google Gemini 1.5 Flash via LangChain JS</span></div>
+      <div class="meta-row"><span class="meta-label">Protocol:</span><span class="meta-value">Baileys Multi-Device WebSocket (Noise Protocol)</span></div>
+      <div class="meta-row"><span class="meta-label">Documentation Version:</span><span class="meta-value">v2.1.0 — Production Standard</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. System Architecture Overview</h2>
+  <p>
+    The WhatsApp Gateway is designed as a carrier-grade microservice that interfaces between internal enterprise applications (CRMs, ERPs, support bots) and real WhatsApp accounts. It handles three core responsibilities:
+  </p>
+  <ul>
+    <li><strong>Persistent Session Lifecycle:</strong> Links company WhatsApp numbers via multi-device QR code pairing, storing cryptographic Signal keys directly in PostgreSQL. Sockets survive container restarts without requiring re-scans.</li>
+    <li><strong>Asynchronous Message Outbox:</strong> Provides non-blocking REST endpoints returning <code>HTTP 202 Accepted</code>, scheduling outgoing messages through a strictly paced outbox queue.</li>
+    <li><strong>Inbound Event Webhooks &amp; RAG Support:</strong> Receives customer messages, validates HMAC signatures, streams events to webhooks, and synthesizes grounded AI customer replies using Google Gemini 1.5 Flash and document vector context.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-title">Architectural Decoupling Guarantee</div>
+    Internal applications never interact directly with WhatsApp sockets or rate-limiting delays. They interact exclusively with synchronous REST endpoints. The internal outbox worker handles the pacing, network reconnects, and typing presence completely asynchronously.
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="page-break"></div>
+  <h2>2. Deep Dive: The Outbox Concurrency Engine</h2>
+  <h3>Why PostgreSQL <code>FOR UPDATE SKIP LOCKED</code> Was Chosen Over BullMQ (Redis) &amp; RabbitMQ</h3>
+  
+  <p>
+    Message queuing in high-reliability gateways presents unique requirements that differ from standard background job workers. Below is the technical rationale for why PostgreSQL's native row-level locking was selected:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Evaluation Dimension</th>
+        <th>PostgreSQL <code>SKIP LOCKED</code> (Chosen)</th>
+        <th>BullMQ (Redis)</th>
+        <th>RabbitMQ (AMQP)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dual-Write Consistency</strong></td>
+        <td><span class="badge badge-success">100% ACID Guaranteed</span><br>Written in the same database transaction as the message record. Zero ghost messages.</td>
+        <td><span class="badge badge-danger">High Risk</span><br>Two-phase write over network. If Redis blinks after DB write, the job is lost forever.</td>
+        <td><span class="badge badge-danger">High Risk</span><br>Requires distributed transaction or dual-phase commit to prevent DB/broker desync.</td>
+      </tr>
+      <tr>
+        <td><strong>Single-Stream per Number</strong></td>
+        <td><span class="badge badge-success">Native SQL Filter</span><br><code>WHERE sessionId = :id ... LIMIT 1</code> guarantees strictly 1 message at a time per number.</td>
+        <td><span class="badge badge-danger">Complex</span><br>Requires BullMQ Pro grouped jobs or dynamic queue allocation per phone number.</td>
+        <td><span class="badge badge-danger">Complex</span><br>Requires single active consumer pattern per routing key or manual thread locking.</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Hour Cooldown Scheduling</strong></td>
+        <td><span class="badge badge-success">Zero Memory Cost</span><br>Updates <code>nextRetryAt = timestamp</code> in DB. Sleeps on disk until exact millisecond.</td>
+        <td><span class="badge badge-info">Moderate</span><br>Uses Redis sorted sets (ZSET). Retains entire payload in expensive RAM.</td>
+        <td><span class="badge badge-danger">Poor</span><br>Requires Dead-Letter Exchanges (DLX) and per-message TTL hackery.</td>
+      </tr>
+      <tr>
+        <td><strong>Crash Recovery</strong></td>
+        <td><span class="badge badge-success">WAL-Backed on Disk</span><br>Survives power cuts or <code>kill -9</code>. Stale locks recovered automatically.</td>
+        <td><span class="badge badge-danger">RAM Eviction Risk</span><br>Default Redis eviction can drop jobs under memory pressure.</td>
+        <td><span class="badge badge-info">Durable</span><br>Durable queues survive if explicitly configured, but recovery is heavy.</td>
+      </tr>
+      <tr>
+        <td><strong>Operational Footprint</strong></td>
+        <td><span class="badge badge-success">0 Extra Infrastructure</span><br>Reuses existing PostgreSQL cluster.</td>
+        <td>Requires dedicated Redis cluster and Sentinel.</td>
+        <td>Requires Erlang VM, RabbitMQ cluster, and monitoring.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The "Dual-Write" Anomaly Explained</h3>
+  <p>
+    When an API receives a message send request, it must write a row in the <code>messages</code> table (so customer service sees the message in chat history) and notify the sender worker. If an external broker like Redis or RabbitMQ is used:
+  </p>
+  <pre><code>// THE BROKEN PATTERN (BullMQ / RabbitMQ):
+await db.Message.create({ id: 104, text: "Your order shipped", status: "queued" });
+// <-- If server crashes or Redis network times out right here:
+await redisQueue.add({ messageId: 104 }); // NEVER RUNS!
+// Result: Message 104 is stuck in PostgreSQL as "queued" forever.</code></pre>
+
+  <p>
+    <strong>The PostgreSQL Outbox Solution:</strong>
+  </p>
+  <pre><code>// THE ATOMIC SOLUTION (PostgreSQL Outbox):
+await db.sequelize.transaction(async (t) => {
+  const msg = await db.Message.create({ ... }, { transaction: t });
+  await db.OutboxJob.create({ messageId: msg.id, ... }, { transaction: t });
+});
+// Result: Both commit together or both roll back together. 100% ACID consistency.</code></pre>
+
+  <!-- SECTION 3 -->
+  <div class="page-break"></div>
+  <h2>3. Technology Stack Justification &amp; Trade-Off Analysis</h2>
+
+  <h3>1. Runtime &amp; Framework: Node.js 20+ (ESM) + Express 5.0</h3>
+  <ul>
+    <li><strong>Why not Python (FastAPI) or Go:</strong> The de facto open-source WhatsApp multi-device engine, <em>Baileys</em>, is built natively in TypeScript for Node.js. Running the gateway in Python or Go would require an inter-process gRPC/IPC bridge to a Node.js sidecar, introducing serialization latency, socket disconnection hazards, and duplicate memory consumption.</li>
+    <li><strong>Why Express 5.0:</strong> Native Promise rejection handling, modern regex route parameters, and seamless middleware cascading without unhandled rejection crashes.</li>
+  </ul>
+
+  <h3>2. Vector Database: PostgreSQL + pgvector</h3>
+  <ul>
+    <li><strong>Why not Pinecone / Weaviate / Milvus:</strong> Pinecone introduces recurring per-pod or per-query SaaS fees and requires synchronizing data between PostgreSQL and external cloud endpoints. By leveraging <code>pgvector</code> in the existing PostgreSQL database, relational session data and high-dimensional embeddings (768-d) live in the same ACID-compliant engine.</li>
+    <li><strong>Zero-Dependency Cosine Fallback:</strong> The system includes a custom PostgreSQL PL/pgSQL function <code>cosine_similarity(float8[], float8[])</code>. If running on standard Windows PostgreSQL installations without C-extension binaries, the vector search continues to operate with mathematical parity.</li>
+  </ul>
+
+  <h3>3. AI Intelligence: Google Gemini 1.5 Flash via LangChain JS</h3>
+  <ul>
+    <li><strong>Why not OpenAI GPT-4o or Claude 3.5 Sonnet:</strong> Gemini 1.5 Flash provides an industry-leading free tier (15 requests/min, 1,500 requests/day, 1M tokens/min) with ultra-low latency (&lt;600ms Time-to-First-Token). Its 1-million-token context window eliminates context-truncation penalties when passing detailed company manuals.</li>
+    <li><strong>LangChain JS Integration:</strong> Standardizes text chunking (<code>RecursiveCharacterTextSplitter</code>), prompt template parameterization, and clean switching between models without rewriting business logic.</li>
+  </ul>
+
+  <h3>4. WhatsApp Driver: Baileys WebSocket Protocol</h3>
+  <ul>
+    <li><strong>Why not Official WhatsApp Cloud API:</strong> Meta's Cloud API charges per 24-hour conversation window and requires extensive Meta Business Manager verification. Baileys connects via native WhatsApp Web multi-device WebSockets with zero per-message charges.</li>
+    <li><strong>Why not Puppeteer / Selenium:</strong> Headless Chrome automation consumes 800MB–1.5GB RAM per session and frequently crashes when WhatsApp Web updates its DOM. Baileys operates purely in JavaScript memory (&lt;40MB RAM per session) using WhatsApp's binary Protobuf protocol.</li>
+  </ul>
+
+  <!-- SECTION 4 -->
+  <div class="page-break"></div>
+  <h2>4. Multi-Tier Anti-Ban Engine &amp; Hard Rate Limiting</h2>
+  <p>
+    WhatsApp uses automated behavioral heuristics to flag spam bots. The gateway implements an enterprise <strong>Anti-Ban Engine</strong> (<code>src/services/antiBan.service.js</code>) enforcing 6 strict mathematical barriers:
+  </p>
+
+  <div class="flow-step">
+    <span class="flow-step-num">1</span><strong>Rolling 60-Second Window (Max 4 msgs/min in Strict Mode):</strong>
+    Instead of an approximate counter, timestamps of every sent message are kept in a rolling 60-second array. If 4 messages have been sent within the last 60 seconds, the worker calculates the exact millisecond cooldown remaining and reschedules the job.
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-step-num">2</span><strong>Hard Inter-Message Gap (Minimum 5.0 Seconds):</strong>
+    Enforces a mandatory hardware cooldown of 5,000ms between any two consecutive dispatches, preventing burst spikes.
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-step-num">3</span><strong>Same-Recipient Flood Protection (Minimum 10.0 Seconds):</strong>
+    Tracks contact JIDs. If a client application queues multiple rapid messages to the same phone number, the engine inserts a 10-second gap between them.
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-step-num">4</span><strong>Cold Contact Velocity Limiter (Max 6 New Contacts / Hour):</strong>
+    WhatsApp flags accounts that message dozens of brand-new, unsaved contacts. The engine tracks new vs. existing contacts; the 7th new contact in an hour is deferred to the next hour.
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-step-num">5</span><strong>Natural Burst Pauses ("Coffee Break"):</strong>
+    After every 10 to 15 continuous messages, the engine injects a human-like pause of 45 to 90 seconds.
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-step-num">6</span><strong>Daily Warmup Schedule (Day 1: 25 msgs/day):</strong>
+    Fresh numbers start with a strict daily cap of 25 messages, ramping up by 20% daily at midnight up to 300/day. Once the daily limit is hit, jobs sleep in PostgreSQL until 00:05 the next day.
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="page-break"></div>
+  <h2>5. End-to-End System Flows</h2>
+
+  <h3>Flow A: Message Sending &amp; Anti-Ban Execution</h3>
+  <pre><code>[Client Application] ──POST /messages/text──► [messageService]
+                                                     │
+                                                     ▼ (Atomic Transaction)
+                                              [Postgres: messages]
+                                              [Postgres: outbox_jobs]
+                                                     │
+                                                     ▼ (HTTP 202 Accepted)
+                                              [SenderWorker Loop]
+                                                     │
+                                                     ▼ outboxService.dequeue()
+                                              [FOR UPDATE SKIP LOCKED]
+                                                     │
+                     ┌───────────────────────────────┴───────────────────────────────┐
+                     ▼                                                               ▼
+        [antiBanService.canSend() == false]                             [antiBanService.canSend() == true]
+                     │                                                               │
+                     ▼                                                               ▼
+       outboxService.reschedule(id, waitMs)                             1. sendPresenceUpdate('composing')
+       (Resets status='queued', nextRetryAt=future)                     2. Natural Typing Delay (35-75ms/char)
+                     │                                                  3. Baileys socket.sendMessage()
+                     ▼                                                  4. outboxService.markSent(waMessageId)
+         (Job sleeps safely in DB)                                      5. Random Post-Send Gap (4s - 9s)</code></pre>
+
+  <h3>Flow B: Inbound Customer Message &amp; AI RAG Auto-Reply</h3>
+  <pre><code>[Customer WhatsApp Phone] ────WhatsApp Message────► [Baileys WebSocket Socket]
+                                                            │
+                                                            ▼ 'message' event
+                                                   [webhookService.handleInbound]
+                                                            │
+                                                            ▼ (Upsert into messages table)
+                                                   [aiBotService.handleInboundMessage]
+                                                            │
+                               ┌────────────────────────────┴────────────────────────────┐
+                               ▼                                                         ▼
+                  [Guardrails Failed]                                        [Guardrails Passed]
+                  (Self message, or agent replied &lt;5m ago,                    (Customer asking support query)
+                   or rate limit exceeded &gt;5/min)                                        │
+                               │                                                         ▼
+                               ▼                                                [ragService.answerQuestion]
+                           (Ignored)                                                     │
+                                                                                         ▼
+                                                                        1. Embed query via text-embedding-004
+                                                                        2. Postgres cosine_similarity search
+                                                                        3. Retrieve top-4 document chunks
+                                                                        4. LangChain + Gemini 1.5 Flash synthesis
+                                                                                         │
+                                                                                         ▼
+                                                                        [messageService.sendText(botAnswer)]
+                                                                                         │
+                                                                                         ▼
+                                                                        (Queued in outbox_jobs -> Dispatched)</code></pre>
+
+  <!-- SECTION 6 -->
+  <div class="page-break"></div>
+  <h2>6. Complete REST &amp; Webhook API Reference</h2>
+
+  <h3>A. Session Management</h3>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>POST</code></td><td><code>/api/v1/sessions</code></td><td>Creates a new WhatsApp session. Body: <code>{"id": "sales-1", "name": "Sales Line"}</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/v1/sessions/:id/qr</code></td><td>Renders the multi-device QR pairing code as image (<code>format=png</code>) or JSON (<code>format=json</code>).</td></tr>
+      <tr><td><code>DELETE</code></td><td><code>/api/v1/sessions/:id</code></td><td>Logs out the WhatsApp socket and destroys stored session state.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/v1/sessions/:id/simulate/incoming</code></td><td>Injects a mock customer message for sandbox testing with zero ban risk.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>B. Message Sending Endpoints</h3>
+  <pre><code># 1. Send Plain Text
+POST /api/v1/sessions/sales-1/messages/text
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "to": "919876543210",
+  "text": "Hello! Your package has been dispatched via Express Delivery.",
+  "idempotencyKey": "order-9912-dispatched"
+}
+
+# 2. Upload and Send Voice Note (Microphone Blob or Audio File)
+POST /api/v1/sessions/sales-1/messages/voice/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary .webm / .ogg / .mp3 audio]
+to: "919876543210"
+idempotencyKey: "voice-note-101"
+
+# 3. Upload and Send Image
+POST /api/v1/sessions/sales-1/messages/image/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary image: .png / .jpg]
+to: "919876543210"
+caption: "Product catalog attached"
+
+# 4. Upload and Send Document / PDF
+POST /api/v1/sessions/sales-1/messages/document/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary document: .pdf / .docx]
+to: "919876543210"</code></pre>
+
+  <h3>C. RAG Knowledge Base Endpoints</h3>
+  <pre><code># 1. Ingest Knowledge Document into Vector Store
+POST /api/v1/rag/documents/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary document: .pdf / .docx / .txt / .md]
+title: "Shipping and Return Policy 2026"
+
+# 2. Test RAG Semantic Query
+POST /api/v1/rag/query
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "query": "How do I return a damaged item?",
+  "topK": 3
+}
+
+# 3. Update AI Bot & Gemini API Key Settings
+POST /api/v1/rag/settings
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "apiKey": "AIzaSy...",
+  "botEnabled": true,
+  "sessionId": "global"
+}</code></pre>
+
+  <h3>D. Inbound Webhook Specification &amp; Verification</h3>
+  <p>
+    When an inbound message is received or message status updates (sent, delivered, read), subscribed webhooks receive an HTTP POST with header <code>X-Signature: sha256=...</code> computed with your webhook secret.
+  </p>
+  <pre><code>// Receiver-Side HMAC Verification (Node.js):
+import crypto from 'crypto';
+
+function verifyWebhook(req, secret) {
+  const incomingSignature = req.headers['x-signature'];
+  const computedSignature = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
+    
+  return crypto.timingSafeEqual(
+    Buffer.from(incomingSignature),
+    Buffer.from(computedSignature)
+  );
+}</code></pre>
+
+</body>
+</html>

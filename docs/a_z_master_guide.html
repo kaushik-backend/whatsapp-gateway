@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp API Gateway & AI Chat Support Platform — A-to-Z Master Engineering Specification</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 16mm 14mm;
+    }
+    :root {
+      --primary: #128C7E;
+      --primary-dark: #075E54;
+      --accent: #25D366;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --bg-code: #f3f4f6;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 13px;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .cover {
+      page-break-after: always;
+      padding: 50px 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 85vh;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: var(--primary-dark);
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .cover h1 {
+      font-size: 30px;
+      font-weight: 900;
+      color: #111827;
+      margin: 0 0 16px 0;
+      line-height: 1.25;
+    }
+    .cover .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 35px auto;
+      line-height: 1.6;
+    }
+    .meta-box {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 22px;
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: left;
+      font-size: 12px;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed #f3f4f6;
+    }
+    .meta-row:last-child { border-bottom: none; }
+    .meta-label { color: var(--text-muted); font-weight: 600; }
+    .meta-value { font-weight: 700; color: #111827; }
+
+    h2 {
+      font-size: 18px;
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 5px;
+      margin-top: 30px;
+      margin-bottom: 12px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 14px;
+      color: #111827;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+    p, ul, ol { margin-top: 0; margin-bottom: 10px; }
+    li { margin-bottom: 3px; }
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 11.5px;
+      background: var(--bg-code);
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #b91c1c;
+    }
+    pre {
+      background: #111827;
+      color: #f3f4f6;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      overflow-x: auto;
+      margin-bottom: 14px;
+      line-height: 1.4;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 11.5px;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 700;
+      color: #111827;
+    }
+    tr:nth-child(even) { background: #fafafa; }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .badge-info { background: #e0f2fe; color: #0369a1; }
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: #f0fdf4;
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+    .callout-title { font-weight: 700; margin-bottom: 3px; }
+    .flow-box {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      page-break-inside: avoid;
+    }
+    .page-break { page-break-before: always; }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div>
+      <span class="cover-badge">A-TO-Z MASTER ENGINEERING BLUEPRINT</span>
+      <h1>WhatsApp API Gateway &amp;<br>AI Chat Support Platform</h1>
+      <p class="subtitle">
+        Exhaustive technical documentation covering every implementation detail, rationale behind technology choices versus industry alternatives, the PostgreSQL SKIP LOCKED outbox concurrency engine, multi-tier anti-ban mathematics, and complete API specifications.
+      </p>
+    </div>
+
+    <div class="meta-box">
+      <div class="meta-row"><span class="meta-label">Architecture:</span><span class="meta-value">Transactional Outbox + Async Event-Driven</span></div>
+      <div class="meta-row"><span class="meta-label">Concurrency Engine:</span><span class="meta-value">PostgreSQL FOR UPDATE SKIP LOCKED</span></div>
+      <div class="meta-row"><span class="meta-label">WhatsApp Engine:</span><span class="meta-value">Baileys WebSocket Driver (Noise Protocol)</span></div>
+      <div class="meta-row"><span class="meta-label">Vector Storage:</span><span class="meta-value">PostgreSQL + pgvector (768-D dense embeddings)</span></div>
+      <div class="meta-row"><span class="meta-label">AI Intelligence:</span><span class="meta-value">Google Gemini 1.5 Flash via LangChain JS</span></div>
+      <div class="meta-row"><span class="meta-label">Target Environment:</span><span class="meta-value">Production Docker / Kubernetes / Node.js 20+</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. Executive Summary &amp; Core Topology</h2>
+  <p>
+    The WhatsApp Gateway serves as an autonomous, self-hosted communication bridge that provides enterprise microservices, CRMs, and automated AI agents with reliable, ban-safe programmatic access to WhatsApp. 
+  </p>
+  <p>
+    Unlike conventional wrapper libraries that crash on redeployments or get numbers banned within minutes due to uncontrolled bursts, this platform implements a hardened, multi-tier architecture:
+  </p>
+  <ul>
+    <li><strong>Transactional Outbox:</strong> Decouples synchronous HTTP requests from asynchronous WhatsApp socket transmissions with 100% ACID consistency.</li>
+    <li><strong>Anti-Ban Engine:</strong> Enforces mathematical rate limits (4 msgs/min strict cap, 5s inter-message hardware gap, 10s same-recipient cooldown, 6 new contacts/hr velocity cap, and 45–90s burst pauses).</li>
+    <li><strong>RAG AI Support Bot:</strong> Retrieves semantic documentation chunks from PostgreSQL using vector cosine similarity, passing context to Google Gemini 1.5 Flash to automatically answer customer queries.</li>
+  </ul>
+
+  <!-- SECTION 2 -->
+  <div class="page-break"></div>
+  <h2>2. Database Architecture &amp; Data Models (PostgreSQL)</h2>
+  <h3>Why PostgreSQL 16 Was Chosen Over MongoDB, MySQL, and DynamoDB</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>PostgreSQL 16 (Chosen)</th>
+        <th>MongoDB</th>
+        <th>MySQL 8</th>
+        <th>DynamoDB</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ACID Outbox Transaction</strong></td>
+        <td><span class="badge badge-success">Atomic Commit</span><br>Writes message record and queue job in single SQL transaction.</td>
+        <td><span class="badge badge-danger">High Overhead</span><br>Multi-doc transactions are heavy and lock collections.</td>
+        <td>Supported (InnoDB), but lacks native partial indexing for queue states.</td>
+        <td><span class="badge badge-danger">Unsupported</span><br>No multi-table atomic rollback without costly transactions API.</td>
+      </tr>
+      <tr>
+        <td><strong>Vector Storage (RAG)</strong></td>
+        <td><span class="badge badge-success">pgvector Extension</span><br>768-d vector embeddings in the same DB as chats and keys.</td>
+        <td>Requires Atlas Vector Search (paid proprietary cloud lock-in).</td>
+        <td>No native vector support; requires external vector plugin.</td>
+        <td>Requires AWS OpenSearch integration ($$$).</td>
+      </tr>
+      <tr>
+        <td><strong>Queue Concurrency</strong></td>
+        <td><span class="badge badge-success">SKIP LOCKED</span><br>Non-blocking distributed dequeueing.</td>
+        <td>Relies on optimistic locks, causing high write conflicts.</td>
+        <td>Supported, but table locking semantics are more aggressive.</td>
+        <td>Requires external AWS SQS queue service.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Schema Entity Overview</h3>
+  <ul>
+    <li><code>sessions</code>: Tracks multi-device pairing state (<code>starting</code>, <code>qr</code>, <code>connected</code>, <code>logged_out</code>), phone numbers, and last activity timestamps.</li>
+    <li><code>auth_states</code>: Stores cryptographic Signal keys, pre-keys, and app-state sync credentials directly in PostgreSQL JSONB, enabling instant container redeployment without physical QR re-scanning.</li>
+    <li><code>messages</code>: Complete audit log of all inbound and outbound messages, statuses (<code>queued</code>, <code>sent</code>, <code>delivered</code>, <code>read</code>, <code>failed</code>), and idempotency keys.</li>
+    <li><code>outbox_jobs</code>: The execution queue containing message payloads, retry counters, locking metadata (<code>lockedAt</code>, <code>lockedBy</code>), and cooldown timestamps (<code>nextRetryAt</code>).</li>
+    <li><code>knowledge_documents</code> &amp; <code>knowledge_chunks</code>: The RAG repository storing document metadata alongside 768-dimensional vector embeddings.</li>
+    <li><code>webhooks</code> &amp; <code>webhook_deliveries</code>: Subscribed HTTP callback endpoints and immutable dispatch audit logs.</li>
+  </ul>
+
+  <!-- SECTION 3 -->
+  <div class="page-break"></div>
+  <h2>3. The Outbox Concurrency Engine: Why SKIP LOCKED Over BullMQ &amp; RabbitMQ</h2>
+
+  <h3>Detailed Comparative Analysis</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Evaluation Vector</th>
+        <th>PostgreSQL SKIP LOCKED (Chosen)</th>
+        <th>BullMQ (Redis)</th>
+        <th>RabbitMQ (AMQP)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>The Dual-Write Bug</strong></td>
+        <td><span class="badge badge-success">Mathematically Impossible</span><br>Message record and queue job are committed in the same database transaction.</td>
+        <td><span class="badge badge-danger">High Hazard</span><br>If Redis flushes or times out after DB insert, the message is orphaned forever.</td>
+        <td><span class="badge badge-danger">High Hazard</span><br>Network partitioned broker causes database vs. queue state inconsistency.</td>
+      </tr>
+      <tr>
+        <td><strong>Strict FIFO per Session</strong></td>
+        <td><span class="badge badge-success">Native SQL Guarantee</span><br><code>WHERE sessionId = :id ORDER BY id ASC LIMIT 1</code>.</td>
+        <td>Complex; requires BullMQ Pro grouped keys or dynamic per-number queues.</td>
+        <td>Complex; requires single-active consumer per queue.</td>
+      </tr>
+      <tr>
+        <td><strong>Dynamic Cooldown Rescheduling</strong></td>
+        <td><span class="badge badge-success">Zero Memory Footprint</span><br><code>nextRetryAt = NOW() + cooldown</code>. Job sleeps on disk until exact millisecond.</td>
+        <td>Expensive; keeps delayed jobs in Redis RAM ZSETs.</td>
+        <td>Cumbersome; requires Dead Letter Exchanges (DLX) and TTL routing.</td>
+      </tr>
+      <tr>
+        <td><strong>Infrastructure Footprint</strong></td>
+        <td><span class="badge badge-success">1 Single Engine</span><br>Zero extra servers to manage, monitor, or pay for.</td>
+        <td>2 Engines: PostgreSQL + Redis Cluster + Sentinel.</td>
+        <td>2 Engines: PostgreSQL + RabbitMQ Broker + Erlang VM.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The Core Dequeue Query</h3>
+  <pre><code>UPDATE "outbox_jobs"
+SET 
+  status = 'processing',
+  "lockedAt" = :now,
+  "lockedBy" = :workerId
+WHERE id = (
+  SELECT id FROM "outbox_jobs"
+  WHERE status = 'queued'
+    AND "sessionId" = :sessionId
+    AND "nextRetryAt" <= :now
+  ORDER BY id ASC
+  FOR UPDATE SKIP LOCKED
+  LIMIT 1
+)
+RETURNING *;</code></pre>
+
+  <!-- SECTION 4 -->
+  <div class="page-break"></div>
+  <h2>4. WhatsApp Driver Layer: Baileys vs. Alternatives</h2>
+  <h3>Why Baileys Was Chosen</h3>
+  <ul>
+    <li><strong>Zero Per-Message Fees:</strong> Unlike Meta's Cloud API (which charges $0.03–$0.08 per 24-hour conversation window and requires corporate Meta Business verification), Baileys connects via native WhatsApp multi-device WebSockets with zero API charges.</li>
+    <li><strong>Lightweight Resource Consumption:</strong> Unlike Puppeteer or Selenium (which spawn headless Chromium instances consuming 800MB–1.5GB of RAM per session), Baileys operates purely in JavaScript memory (&lt;40MB RAM per session) using WhatsApp's binary Protobuf protocol.</li>
+    <li><strong>PostgreSQL Signal Key Adapter:</strong> Stores all identity keys, signed keys, and pre-keys in PostgreSQL rather than local disk files, preventing file-lock corruption across clustered Docker containers.</li>
+  </ul>
+
+  <!-- SECTION 5 -->
+  <h2>5. The Multi-Tier Anti-Ban Engine &amp; Behavioral Pacing</h2>
+  <p>
+    WhatsApp uses automated behavioral heuristics to detect automated accounts. The gateway implements an enterprise <strong>Anti-Ban Engine</strong> (<code>src/services/antiBan.service.js</code>) enforcing 6 strict mathematical barriers:
+  </p>
+
+  <div class="flow-box"><strong>Rule 1: Rolling 60-Second Window (Max 4 msgs/min in Strict Mode):</strong> An array of timestamps in the last 60 seconds is inspected. The 5th message is deferred until the oldest message falls out of the window.</div>
+  <div class="flow-box"><strong>Rule 2: Hardware Minimum Gap (5.0s):</strong> Enforces a mandatory cooldown of 5,000ms between any two consecutive dispatches, preventing burst spikes.</div>
+  <div class="flow-box"><strong>Rule 3: Same-Recipient Cooldown (10.0s):</strong> Prevents spamming the same recipient. Messages to the same contact are paced at least 10 seconds apart.</div>
+  <div class="flow-box"><strong>Rule 4: Cold Contact Velocity Limiter (Max 6 New Contacts / Hour):</strong> Prevents accounts from mass-messaging unknown contacts. The 7th new contact in an hour is deferred to the next hour.</div>
+  <div class="flow-box"><strong>Rule 5: Natural Burst Pauses ("Coffee Break"):</strong> After 10 continuous messages, injects a natural human pause of 45 to 90 seconds.</div>
+  <div class="flow-box"><strong>Rule 6: Daily Warmup Schedule (Day 1: 25 msgs/day):</strong> New numbers start at 25 msgs/day, increasing by 20% daily at midnight up to 300 msgs/day.</div>
+
+  <!-- SECTION 6 -->
+  <div class="page-break"></div>
+  <h2>6. The RAG Knowledge Pipeline &amp; AI Support Bot</h2>
+
+  <h3>Google Gemini 1.5 Flash + LangChain JS</h3>
+  <ul>
+    <li><strong>Model Choice:</strong> Google Gemini 1.5 Flash provides an industry-leading free tier (15 requests/min, 1,500 requests/day, 1M tokens/min) with ultra-low latency (&lt;600ms Time-to-First-Token) and a 1-million-token context window.</li>
+    <li><strong>Embeddings:</strong> Google's <code>text-embedding-004</code> produces dense 768-dimensional vector representations.</li>
+    <li><strong>In-Database Vector Cosine Similarity:</strong>
+      <pre><code>SELECT c.id, c.content, d.title, cosine_similarity(c.embedding, :queryVec) as similarity
+FROM knowledge_chunks c
+JOIN knowledge_documents d ON c."documentId" = d.id
+ORDER BY similarity DESC LIMIT 4;</code></pre>
+    </li>
+    <li><strong>Production Guardrails:</strong>
+      <ul>
+        <li>Self-message filter: Never replies to our own messages (<code>fromMe === true</code>).</li>
+        <li>Human operator pause: If a human agent replies to a chat from the phone, the bot automatically pauses for 5 minutes.</li>
+        <li>Rate limiting: Maximum 5 bot replies per minute per chat JID.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <!-- SECTION 7 -->
+  <h2>7. Networking, Webhooks &amp; Communications: Why Not Socket.io?</h2>
+  <ul>
+    <li><strong>WhatsApp Protocol Incompatibility:</strong> WhatsApp Web communicates via binary WebSockets using the Noise Protocol. Socket.io cannot talk to WhatsApp's native socket protocol.</li>
+    <li><strong>Webhooks Are the Industry Standard for B2B:</strong> External microservices, CRMs, and serverless functions (AWS Lambda, Cloud Run) cannot maintain persistent Socket.io connections. They require standard signed HTTP POST webhooks (<code>POST /webhook</code>).</li>
+    <li><strong>HMAC-SHA256 Signing:</strong> All webhook deliveries include an <code>X-Signature</code> header computed as:
+      <code>sha256 = HMAC_SHA256(rawBody, webhookSecret)</code>, ensuring payloads cannot be forged or tampered with in transit.</li>
+  </ul>
+
+  <!-- SECTION 8 -->
+  <div class="page-break"></div>
+  <h2>8. End-to-End System Flows &amp; Step-by-Step Working Mechanism</h2>
+
+  <h3>Step-by-Step Mechanism 1: Server Bootup &amp; Auto-Restoration</h3>
+  <pre><code>[Gateway Boot] ──► [loadConfig / .env]
+                       │
+                       ▼ 1. Test PostgreSQL Connection &amp; Run Migrations (001 - 008)
+                       ▼ 2. Re-queue Stuck Jobs: UPDATE outbox_jobs SET status='queued' WHERE status='processing'
+                       ▼ 3. Query Active Sessions: SELECT * FROM sessions WHERE status='connected'
+                       ▼ 4. Staggered Socket Spin-up (1.5s delay between sessions)
+                       ▼ 5. Spawn independent senderWorker loop per session
+                       ▼ 6. Start Watchdog (30s recurring health heartbeat)
+                       ▼ 7. RAG Auto-Seed: If knowledge_documents empty, chunk &amp; embed documentation
+                       ▼ 8. Express 5 begins listening on PORT with static /uploads mounted</code></pre>
+  <ol>
+    <li><strong>Configuration Loading:</strong> Loads environment variables, validates database credentials, anti-ban profile (<code>strict</code>/<code>moderate</code>/<code>relaxed</code>), and AI settings.</li>
+    <li><strong>Database Migration Check:</strong> Verifies all 8 migrations (sessions, auth_states, messages, outbox_jobs, webhooks, webhook_deliveries, api_keys, knowledge_base) are applied.</li>
+    <li><strong>Crash Recovery &amp; Lock Reclamation:</strong> Any jobs left in <code>status: 'processing'</code> from a previous server crash are immediately reset to <code>'queued'</code> with <code>lockedBy = null</code>.</li>
+    <li><strong>Session Reconnection:</strong> Queries all previously connected sessions from <code>sessions</code> table and loads cryptographic Signal keys from <code>auth_states</code>.</li>
+    <li><strong>Staggered Socket Startup:</strong> Connects Baileys instances staggered 1.5 seconds apart to avoid simultaneous connection bursts to WhatsApp servers.</li>
+    <li><strong>Worker Spawning:</strong> Launches a dedicated <code>senderWorker</code> instance for each active WhatsApp session.</li>
+    <li><strong>Watchdog Activation:</strong> Starts a 30-second recurring watchdog (<code>src/workers/watchdog.js</code>) monitoring socket readyState.</li>
+    <li><strong>RAG Auto-Seeding:</strong> Automatically inspects <code>knowledge_documents</code>; if empty, ingests the system documentation, generates 768-D vectors via Google <code>text-embedding-004</code>, and indexes them in PostgreSQL.</li>
+  </ol>
+
+  <h3>Step-by-Step Mechanism 2: Multi-Device QR Pairing &amp; Signal Handshake</h3>
+  <pre><code>[Client / Dashboard] ──POST /sessions──► [Gateway API] ──Init Socket──► [Baileys Driver]
+                                                                          │
+[Browser Displays QR Image] ◄──GET /sessions/:id/qr ◄──'qr' Event────────┘
+          │
+          ▼ Admin scans with Phone (WhatsApp &gt; Linked Devices &gt; Link a Device)
+[Phone WhatsApp] ──Signal Protocol Handshake──► [WhatsApp Web Servers]
+                                                        │
+[auth_states Table] ◄──Save Keys in DB ◄──'connected' Event
+[senderWorker] ◄──────Start Outbox Worker Loop</code></pre>
+  <ol>
+    <li><strong>Session Registration:</strong> Client posts <code>POST /api/v1/sessions</code> with <code>{ "id": "sales-1", "name": "Sales Line" }</code>.</li>
+    <li><strong>Noise Protocol Handshake:</strong> Baileys opens a WebSocket with WhatsApp servers and emits the pairing string via the <code>'qr'</code> event.</li>
+    <li><strong>QR Code Rendering:</strong> Client requests <code>GET /api/v1/sessions/:id/qr?format=png</code>, rendered dynamically via <code>qrcode</code>.</li>
+    <li><strong>Physical Device Scan:</strong> Admin scans the QR code from their phone (<strong>WhatsApp &gt; Linked Devices &gt; Link a Device</strong>).</li>
+    <li><strong>Cryptographic Signal Exchange:</strong> WhatsApp and Baileys exchange Curve25519 identity keys and pre-keys.</li>
+    <li><strong>PostgreSQL Storage:</strong> Our custom auth adapter serializes all session credentials into <code>auth_states</code>.</li>
+    <li><strong>Connected State:</strong> Baileys emits <code>'connected'</code> with the authenticated JID; gateway transitions session status to <code>'connected'</code> and spawns the <code>senderWorker</code>.</li>
+  </ol>
+
+  <div class="page-break"></div>
+  <h3>Step-by-Step Mechanism 3: Outbound Message Sending with Anti-Ban Pacing</h3>
+  <pre><code>[Client Application] ──POST /messages/text──► [Gateway API]
+                                                    │
+                                                    ▼ 1. Authenticate API Key (SHA-256)
+                                                    ▼ 2. Validate JID &amp; Payload (Zod)
+                                                    ▼ 3. Single Atomic SQL Transaction:
+                                                         - Insert messages (status='queued')
+                                                         - Insert outbox_jobs (status='queued')
+                                                    ▼ 4. HTTP 202 Accepted (Instant Non-Blocking)
+                                                    │
+                                                    ▼ (Asynchronous Outbox Loop)
+[senderWorker] ──outboxService.dequeue()──► [FOR UPDATE SKIP LOCKED]
+       │
+       ▼ Evaluates antiBanService.canSend(sessionId, recipientJid)
+       │
+       ├─► IF BLOCKED / RATE-LIMITED:
+       │   outboxService.reschedule(job.id, cooldownMs)
+       │   (Job unlocked, nextRetryAt set to future, sleeps in DB)
+       │
+       └─► IF ALLOWED:
+           1. provider.sendPresenceUpdate(to, 'available')
+           2. provider.sendPresenceUpdate(to, 'composing') (Typing indicator on phone)
+           3. Sleep typing duration (textLength * random(35ms, 75ms))
+           4. Baileys sock.sendMessage() over WebSocket
+           5. outboxService.markSent(waMessageId)
+           6. Sleep post-send jitter gap (4.0s - 9.0s)</code></pre>
+  <ol>
+    <li><strong>Client Request:</strong> External service sends <code>POST /api/v1/sessions/:id/messages/text</code>.</li>
+    <li><strong>API Key Verification:</strong> Token hash verified against <code>api_keys</code> for <code>send</code> permission.</li>
+    <li><strong>Atomic Outbox Commit:</strong> Single SQL transaction inserts into <code>messages</code> and <code>outbox_jobs</code>. Client instantly receives <code>HTTP 202 Accepted</code>.</li>
+    <li><strong>Single-Stream Dequeue:</strong> <code>senderWorker</code> executes <code>SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1</code>.</li>
+    <li><strong>Anti-Ban Gatekeeper:</strong> Checks 6 hard rules: 4 msgs/min window, 5s hardware gap, 10s same-recipient gap, 6 cold contacts/hr, 45-90s burst rest, daily warmup cap.</li>
+    <li><strong>Reschedule on Limit:</strong> If restricted, the job is unlocked and rescheduled in PostgreSQL for <code>NOW() + waitMs</code>. Worker memory remains free.</li>
+    <li><strong>Human Presence Emulation:</strong> Emits <code>available</code> and <code>composing</code> (phone shows "typing..."), waiting 35-75ms per character.</li>
+    <li><strong>Socket Dispatch &amp; Jitter:</strong> Message transmitted via Baileys WebSocket; status marked <code>'sent'</code>; worker sleeps 4-9s random jitter before next job.</li>
+  </ol>
+
+  <h3>Step-by-Step Mechanism 4: Inbound Message Handling &amp; Signed Webhook Delivery</h3>
+  <pre><code>[Customer WhatsApp Phone] ────Sends Text Message────► [WhatsApp Network]
+                                                             │
+                                                             ▼ (WebSocket Protobuf)
+                                                    [Baileys Driver Socket]
+                                                             │
+                                                             ▼ 'messages.upsert' event
+                                                    [sessionService]
+                                                             │
+                                                             ▼ Normalizes Payload
+                                                    [webhookService.handleInboundMessage]
+                                                             │
+                                                             ▼
+                                                    [Postgres: messages Table]
+                                                    (Persisted: fromMe=false, status='delivered')
+                                                             │
+                                                             ▼
+                                                    [webhookDispatcher.dispatch()]
+                                                    1. Compute HMAC-SHA256 signature
+                                                    2. Header: X-Signature: sha256=...
+                                                    3. POST to Subscribed Client Webhook URL
+                                                    4. Exponential retry on failure (1s, 5s, 30s, 2m, 10m, 1h)</code></pre>
+  <ol>
+    <li><strong>Customer Dispatch:</strong> Customer sends a message from their WhatsApp app.</li>
+    <li><strong>Signal Decryption:</strong> Baileys decrypts the Protobuf frame and emits <code>messages.upsert</code>.</li>
+    <li><strong>Database Insertion:</strong> Message persisted in <code>messages</code> with <code>fromMe: false</code> and <code>status: 'delivered'</code>.</li>
+    <li><strong>Cryptographic Signing:</strong> Webhook dispatcher computes <code>HMAC-SHA256(payload, secret)</code> and sets <code>X-Signature</code>.</li>
+    <li><strong>HTTP POST Dispatch:</strong> Webhook delivered to client endpoint; on failure, retried automatically with exponential backoff.</li>
+  </ol>
+
+  <div class="page-break"></div>
+  <h3>Step-by-Step Mechanism 5: Autonomous AI Support Bot &amp; RAG Knowledge Loop</h3>
+  <pre><code>[Inbound Message from Customer] ──► [aiBotService.handleInboundMessage()]
+                                             │
+                                             ▼ 1. Guardrail Checks:
+                                                  - fromMe === true? (Skip)
+                                                  - Agent replied &lt; 5m ago? (Skip)
+                                                  - Rate limit &gt; 5 replies/min? (Skip)
+                                             │
+                                             ▼ 2. Extract Customer Question Text
+                                             ▼ 3. ragService.answerQuestion()
+                                                  │
+                                                  ├─► Embed query via text-embedding-004 (768-D)
+                                                  ├─► SQL: cosine_similarity search on knowledge_chunks
+                                                  ├─► Retrieve top-4 documentation snippets
+                                                  ├─► Fetch recent 6 messages from chat history
+                                                  └─► LangChain + Gemini 1.5 Flash generates answer
+                                             │
+                                             ▼ 4. messageService.sendText(sessionId, chatJid, botAnswer)
+                                             │
+                                             ▼ 5. Queued in outbox_jobs -&gt; Paced by SenderWorker -&gt; Delivered!</code></pre>
+  <ol>
+    <li><strong>Inbound Trigger:</strong> <code>webhookService.handleInboundMessage</code> forwards incoming customer message to <code>aiBotService</code>.</li>
+    <li><strong>Safety Guardrails:</strong> Verifies <code>fromMe === false</code>, confirms no human agent replied in the last 5 minutes, and checks sliding rate limit (&le; 5 replies/min).</li>
+    <li><strong>Dense Vector Embedding:</strong> Generates a 768-dimensional normalized float embedding via Google's <code>text-embedding-004</code>.</li>
+    <li><strong>PostgreSQL Cosine Similarity Search:</strong> Executes <code>cosine_similarity(embedding, queryVec)</code> to find the top 4 most relevant documentation snippets.</li>
+    <li><strong>Multi-Turn Context:</strong> Retrieves recent 6 messages from <code>messages</code> table to provide conversational continuity.</li>
+    <li><strong>AI Synthesis:</strong> Google Gemini 1.5 Flash synthesizes an accurate, grounded, helpful answer via LangChain JS.</li>
+    <li><strong>Outbox Pacing:</strong> The reply is enqueued into <code>outbox_jobs</code>, paced through human typing emulation, and sent back to the customer's WhatsApp chat.</li>
+  </ol>
+
+  <h3>Step-by-Step Mechanism 6: Microphone Voice Recording &amp; Push-To-Talk (PTT)</h3>
+  <pre><code>[User Clicks "Start Recording"] ──► [Browser navigator.mediaDevices.getUserMedia()]
+                                             │
+                                             ▼ HTML5 MediaRecorder captures 48kHz audio chunks
+[Live Pulsing Timer: 00:08]                  │
+                                             ▼ User clicks "Stop &amp; Preview"
+[Instant &lt;audio controls&gt; Preview] ◄── Blob URL created (audio/webm)
+                                             │
+                                             ▼ User clicks "Send Message"
+[Browser Packages FormData] ──POST /messages/voice/upload──► [Multer Engine]
+                                                                   │
+                                                                   ▼ Writes to uploads/ directory
+                                                            [messageService.sendVoice()]
+                                                                   │
+                                                                   ▼ Enqueues in outbox_jobs
+                                                            [senderWorker]
+                                                                   │
+                                                                   ▼ Baileys socket.sendMessage()
+                                                                     with flag { ptt: true }
+                                                                   │
+[Customer WhatsApp Phone] ◄──Renders as Native Voice Note with Audio Waveform Scrubber!</code></pre>
+  <ol>
+    <li><strong>Microphone Stream:</strong> React dashboard accesses microphone via <code>navigator.mediaDevices.getUserMedia({ audio: true })</code>.</li>
+    <li><strong>HTML5 MediaRecorder:</strong> Captures audio chunks with live elapsed timer and visual recording pulse.</li>
+    <li><strong>Instant In-Browser Preview:</strong> Assembles <code>audio/webm</code> Blob and generates an instant preview via <code>&lt;audio controls&gt;</code>.</li>
+    <li><strong>Multipart Upload:</strong> Dispatches multipart form data to <code>POST /api/v1/sessions/:id/messages/voice/upload</code>.</li>
+    <li><strong>Disk Streaming:</strong> Multer stores audio in <code>uploads/</code> with unique timestamp UUID.</li>
+    <li><strong>PTT Dispatch:</strong> Sender worker executes Baileys <code>sendMessage(jid, { audio: { url }, ptt: true })</code>.</li>
+    <li><strong>Native WhatsApp Voice Note:</strong> Delivered to customer's phone as a true WhatsApp voice note with audio waveform scrubber and green microphone icon.</li>
+  </ol>
+
+  <!-- SECTION 9 -->
+  <div class="page-break"></div>
+  <h2>9. Complete REST &amp; Webhook API Reference</h2>
+
+  <h3>A. Session Management</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>POST</code></td><td><code>/api/v1/sessions</code></td><td>Creates a WhatsApp session. Body: <code>{"id": "sales-1", "name": "Sales Line"}</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/v1/sessions/:id/qr</code></td><td>Renders pairing QR code as image (<code>format=png</code>) or JSON (<code>format=json</code>).</td></tr>
+      <tr><td><code>DELETE</code></td><td><code>/api/v1/sessions/:id</code></td><td>Logs out and destroys stored session credentials.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/v1/sessions/:id/simulate/incoming</code></td><td>Injects a mock customer message for sandbox testing with zero ban risk.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>B. Message Sending Endpoints</h3>
+  <pre><code># Send Text Message
+POST /api/v1/sessions/sales-1/messages/text
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "to": "919876543210",
+  "text": "Hello! Your support ticket #4102 has been resolved.",
+  "idempotencyKey": "ticket-4102-resolved"
+}
+
+# Upload and Send Microphone Voice Note (PTT)
+POST /api/v1/sessions/sales-1/messages/voice/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary audio: .webm / .ogg / .mp3]
+to: "919876543210"
+idempotencyKey: "voice-101"
+
+# Upload and Send Image
+POST /api/v1/sessions/sales-1/messages/image/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary image: .png / .jpg]
+to: "919876543210"
+caption: "Product catalog"
+
+# Upload and Send Document / PDF
+POST /api/v1/sessions/sales-1/messages/document/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary document: .pdf / .docx]
+to: "919876543210"</code></pre>
+
+  <h3>C. RAG Knowledge Base Endpoints</h3>
+  <pre><code># Ingest Document (.pdf, .docx, .txt, .md)
+POST /api/v1/rag/documents/upload
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: multipart/form-data
+
+file: [binary file]
+title: "Shipping Policy 2026"
+
+# Query Knowledge Base Directly
+POST /api/v1/rag/query
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "query": "How do I return a damaged product?",
+  "topK": 3
+}
+
+# Configure Gemini Key &amp; Bot Status
+POST /api/v1/rag/settings
+Authorization: Bearer &lt;API_KEY&gt;
+Content-Type: application/json
+
+{
+  "apiKey": "AIzaSy...",
+  "botEnabled": true,
+  "sessionId": "global"
+}</code></pre>
+
+  <!-- SECTION 10 -->
+  <div class="page-break"></div>
+  <h2>10. Operational Runbook, Resilience &amp; Production Deployment</h2>
+  <table>
+    <thead><tr><th>Component</th><th>Configuration Key</th><th>Production Value</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td>Provider Engine</td><td><code>WA_PROVIDER</code></td><td><code>baileys</code> (or <code>mock</code> for testing)</td><td>Baileys for live multi-device WhatsApp, Mock for zero-ban unit testing.</td></tr>
+      <tr><td>Anti-Ban Pacing</td><td><code>ANTI_BAN_MODE</code></td><td><code>strict</code></td><td>4 msgs/min, 5s hardware gap, 45-90s burst pauses for maximum account longevity.</td></tr>
+      <tr><td>AI Model</td><td><code>GEMINI_MODEL</code></td><td><code>gemini-1.5-flash</code></td><td>Sub-second inference, generous free tier quotas, 1M token context window.</td></tr>
+      <tr><td>Vector Embeddings</td><td><code>GEMINI_EMBEDDING_MODEL</code></td><td><code>text-embedding-004</code></td><td>768-dimensional normalized dense vectors for semantic knowledge matching.</td></tr>
+      <tr><td>Queue Worker</td><td><code>OUTBOX_POLL_INTERVAL_MS</code></td><td><code>1000</code></td><td>Low-overhead poll interval using SKIP LOCKED without lock contention.</td></tr>
+      <tr><td>Crash Recovery</td><td><code>LOCK_TIMEOUT_MS</code></td><td><code>300000</code> (5 min)</td><td>Automatic reclamation of stalled jobs if a worker node crashes mid-send.</td></tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

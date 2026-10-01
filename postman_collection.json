@@ -1,0 +1,513 @@
+{
+  "info": {
+    "name": "WhatsApp API Gateway",
+    "description": "Complete API collection for the WhatsApp API Gateway",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "apiKey", "value": "YOUR_RAW_API_KEY_HERE" },
+    { "key": "sessionId", "value": "sales-1" },
+    { "key": "phoneNumber", "value": "919876543210" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{apiKey}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] },
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. API Keys",
+      "description": "Create an API key FIRST. You need the admin key for secured endpoints.",
+      "item": [
+        {
+          "name": "Create API Key (Admin - Bootstrap)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.rawKey) {",
+                  "  pm.collectionVariables.set('apiKey', jsonData.data.rawKey);",
+                  "  console.log('API Key saved to collection variable');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] },
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin Master Key\",\n  \"scopes\": [\"admin\", \"send\", \"read\", \"voice\"],\n  \"sessionIds\": [],\n  \"chatJids\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Create API Key (Send Only)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CRM Send Key\",\n  \"scopes\": [\"send\"],\n  \"sessionIds\": [\"sales-1\"],\n  \"chatJids\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Create API Key (Restricted Chat)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Support Bot Key\",\n  \"scopes\": [\"send\", \"read\"],\n  \"sessionIds\": [\"support-1\"],\n  \"chatJids\": [\"919876543210@s.whatsapp.net\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "List API Keys",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] }
+          }
+        },
+        {
+          "name": "Revoke API Key",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api-keys/2/revoke", "host": ["{{baseUrl}}"], "path": ["api-keys", "2", "revoke"] }
+          }
+        },
+        {
+          "name": "Delete API Key",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api-keys/3", "host": ["{{baseUrl}}"], "path": ["api-keys", "3"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Sessions",
+      "description": "Create and manage WhatsApp sessions",
+      "item": [
+        {
+          "name": "Create Session",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions", "host": ["{{baseUrl}}"], "path": ["sessions"] },
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"sales-1\",\n  \"name\": \"Sales Team Number\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Session (Support)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions", "host": ["{{baseUrl}}"], "path": ["sessions"] },
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"support-1\",\n  \"name\": \"Customer Support Line\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List All Sessions",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/sessions", "host": ["{{baseUrl}}"], "path": ["sessions"] },
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get QR Code (PNG - Open in Browser)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/qr?format=png",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "qr"],
+              "query": [{ "key": "format", "value": "png" }]
+            },
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get QR Code (JSON)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/qr?format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "qr"],
+              "query": [{ "key": "format", "value": "json" }]
+            },
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Delete Session (Logout)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}"] },
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Send Messages",
+      "description": "Send WhatsApp messages through the gateway",
+      "item": [
+        {
+          "name": "Send Text Message",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/text", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "text"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"text\": \"Your order #1042 has shipped! Track it at https://example.com/track/1042\",\n  \"idempotencyKey\": \"order-1042-shipped\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Text (No Idempotency Key)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/text", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "text"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"text\": \"Hello! How can we help you today?\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Image Message",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/image", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "image"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"url\": \"https://picsum.photos/400/300\",\n  \"caption\": \"Here is your invoice for order #1042\",\n  \"idempotencyKey\": \"order-1042-invoice-img\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Document (PDF)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/document", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "document"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"url\": \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n  \"filename\": \"Invoice_1042.pdf\",\n  \"mimetype\": \"application/pdf\",\n  \"idempotencyKey\": \"order-1042-invoice-pdf\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Voice Note",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/voice", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "voice"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"url\": \"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\",\n  \"idempotencyKey\": \"voice-note-001\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Reaction (Emoji)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/react", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "react"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"waMessageId\": \"3EB0A1B2C3D4E5F6\",\n  \"emoji\": \"👍\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Text (Idempotency Retry - Same Key)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/text", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "text"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{phoneNumber}}\",\n  \"text\": \"This is a duplicate — won't send twice\",\n  \"idempotencyKey\": \"order-1042-shipped\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Read Messages",
+      "description": "Query messages and chat context",
+      "item": [
+        {
+          "name": "Get Message by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/1", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "1"] }
+          }
+        },
+        {
+          "name": "List Messages (All)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages?limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "messages"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Messages (Filter by Chat)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages?chatJid=919876543210@s.whatsapp.net&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "messages"],
+              "query": [
+                { "key": "chatJid", "value": "919876543210@s.whatsapp.net" },
+                { "key": "limit", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Chat Context (for AI Bot)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/context/chat?chatJid=919876543210@s.whatsapp.net&limit=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "messages", "context", "chat"],
+              "query": [
+                { "key": "chatJid", "value": "919876543210@s.whatsapp.net" },
+                { "key": "limit", "value": "30" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Webhooks",
+      "description": "Register webhook endpoints to receive inbound messages",
+      "item": [
+        {
+          "name": "Register Webhook",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/webhooks", "host": ["{{baseUrl}}"], "path": ["webhooks"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"sales-1\",\n  \"url\": \"https://webhook.site/your-unique-id\",\n  \"secret\": \"my_super_secret_webhook_key_1234\",\n  \"events\": [\"message.received\", \"message.status\", \"session.status\"],\n  \"chatJids\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Webhook (Filtered Chat)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/webhooks", "host": ["{{baseUrl}}"], "path": ["webhooks"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"sales-1\",\n  \"url\": \"https://your-crm.com/api/whatsapp-webhook\",\n  \"secret\": \"crm_webhook_secret_abcdef1234\",\n  \"events\": [\"message.received\"],\n  \"chatJids\": [\"919876543210@s.whatsapp.net\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "List Webhooks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/webhooks?sessionId=sales-1",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks"],
+              "query": [{ "key": "sessionId", "value": "sales-1" }]
+            }
+          }
+        },
+        {
+          "name": "Update Webhook",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/webhooks/1", "host": ["{{baseUrl}}"], "path": ["webhooks", "1"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"events\": [\"message.received\", \"message.status\", \"reaction\"],\n  \"active\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Webhook Deliveries",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/1/deliveries?limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "1", "deliveries"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Failed Deliveries Only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/1/deliveries?status=failed",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "1", "deliveries"],
+              "query": [{ "key": "status", "value": "failed" }]
+            }
+          }
+        },
+        {
+          "name": "Retry Failed Delivery",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/webhooks/deliveries/1/retry", "host": ["{{baseUrl}}"], "path": ["webhooks", "deliveries", "1", "retry"] }
+          }
+        },
+        {
+          "name": "Delete Webhook",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/webhooks/1", "host": ["{{baseUrl}}"], "path": ["webhooks", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Error Cases",
+      "description": "Test error handling and edge cases",
+      "item": [
+        {
+          "name": "404 - Invalid Route",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/nonexistent", "host": ["{{baseUrl}}"], "path": ["nonexistent"] },
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "400 - Invalid Session ID Format",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions", "host": ["{{baseUrl}}"], "path": ["sessions"] },
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"invalid session with spaces!!!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "400 - Missing Required Fields",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/text", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "text"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"919876543210\"\n}"
+            }
+          }
+        },
+        {
+          "name": "400 - Text Too Long (>4096 chars)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/text", "host": ["{{baseUrl}}"], "path": ["sessions", "{{sessionId}}", "messages", "text"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"919876543210\",\n  \"text\": \"a]REPEAT_4097_TIMES[\"\n}"
+            }
+          }
+        },
+        {
+          "name": "401 - Invalid API Key",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "invalid_key_12345", "type": "string" }]
+            }
+          }
+        },
+        {
+          "name": "403 - Insufficient Scope",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api-keys", "host": ["{{baseUrl}}"], "path": ["api-keys"] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "PASTE_A_SEND_ONLY_KEY_HERE", "type": "string" }]
+            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Should Fail\",\n  \"scopes\": [\"admin\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "404 - Session Not Found",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/sessions/nonexistent-session/qr", "host": ["{{baseUrl}}"], "path": ["sessions", "nonexistent-session", "qr"] },
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    }
+  ]
+}

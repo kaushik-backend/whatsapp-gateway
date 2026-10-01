@@ -2,12 +2,18 @@ import { Sequelize } from 'sequelize';
 import config from './index.js';
 import logger from '../utils/logger.js';
 
-const isProduction = config.nodeEnv === 'production';
-
-// Only use SSL for external Render URLs (.render.com).
-// Internal Render URLs (dpg-xxx hostnames) do NOT need/support SSL.
 const dbUrl = config.database.url || '';
-const needsSSL = isProduction && dbUrl.includes('.render.com');
+
+// Auto-detect SSL: enable for cloud DB providers or when sslmode=require is in URL.
+// Skip SSL for localhost/local development.
+const isLocal = dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1');
+const needsSSL = !isLocal && (
+  dbUrl.includes('sslmode=require') ||
+  dbUrl.includes('.neon.tech') ||
+  dbUrl.includes('.render.com') ||
+  dbUrl.includes('.supabase.') ||
+  config.nodeEnv === 'production'
+);
 
 const sequelize = new Sequelize(config.database.url, {
   dialect: 'postgres',

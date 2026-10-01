@@ -1,7 +1,27 @@
-import app from './app.js';
-import db from './models/index.js';
-import logger from './utils/logger.js';
-import config from './config/index.js';
+// Top-level bootstrap wrapper — catches ANY crash during module loading
+console.log('[BOOT] server.js loading...');
+
+let app, db, logger, config;
+
+try {
+  const appModule = await import('./app.js');
+  app = appModule.default;
+
+  const dbModule = await import('./models/index.js');
+  db = dbModule.default;
+
+  const loggerModule = await import('./utils/logger.js');
+  logger = loggerModule.default;
+
+  const configModule = await import('./config/index.js');
+  config = configModule.default;
+} catch (bootError) {
+  console.error('[BOOT FATAL] Failed to load modules:', bootError.message);
+  console.error(bootError.stack);
+  process.exit(1);
+}
+
+console.log('[BOOT] All modules loaded. Starting server...');
 
 let server;
 
@@ -44,7 +64,9 @@ const startServer = async () => {
       logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode.`);
     });
   } catch (error) {
-    logger.error(`Failed to start server: ${error.message}\n${error.stack}`);
+    console.error(`[STARTUP FATAL] ${error.message}`);
+    console.error(error.stack);
+    if (logger) logger.error(`Failed to start server: ${error.message}\n${error.stack}`);
     process.exit(1);
   }
 };
@@ -53,7 +75,7 @@ const startServer = async () => {
 const exitHandler = () => {
   if (server) {
     server.close(() => {
-      logger.info('Server closed.');
+      if (logger) logger.info('Server closed.');
       process.exit(1);
     });
   } else {
@@ -70,10 +92,11 @@ const unexpectedErrorHandler = (error) => {
     msg.includes('Timed Out') ||
     msg.includes('QR refs')
   ) {
-    logger.warn(`[Baileys/Socket Transient] ${msg}`);
+    if (logger) logger.warn(`[Baileys/Socket Transient] ${msg}`);
     return;
   }
-  logger.error(`Unexpected Error: ${error.message}\n${error.stack}`);
+  if (logger) logger.error(`Unexpected Error: ${error.message}\n${error.stack}`);
+  else console.error(`Unexpected Error: ${error.message}\n${error.stack}`);
 };
 
 process.on('uncaughtException', (err) => {
@@ -83,7 +106,7 @@ process.on('uncaughtException', (err) => {
     msg.includes('Bad MAC') ||
     msg.includes('rate-overlimit')
   ) {
-    logger.warn(`[Baileys/Socket Uncaught] ${msg}`);
+    if (logger) logger.warn(`[Baileys/Socket Uncaught] ${msg}`);
     return;
   }
   unexpectedErrorHandler(err);
@@ -93,7 +116,7 @@ process.on('unhandledRejection', unexpectedErrorHandler);
 
 
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM received.');
+  if (logger) logger.info('SIGTERM received.');
   if (server) {
     server.close();
   }

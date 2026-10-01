@@ -1,13 +1,13 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import config from './config/index.js';
 import rateLimiter from './middleware/rateLimiter.middleware.js';
 import AppError from './utils/AppError.js';
 import routes from './routes/index.js';
 import logger from './utils/logger.js';
-
-import path from 'path';
 
 const app = express();
 
@@ -26,8 +26,6 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 // API Routes
 app.use('/api/v1', routes);
 
-import fs from 'fs';
-
 // Serve Frontend (Vite React Build) if present
 const clientDistPath = path.resolve(process.cwd(), 'client', 'dist');
 if (fs.existsSync(clientDistPath)) {
@@ -39,6 +37,7 @@ if (fs.existsSync(clientDistPath)) {
     next();
   });
 }
+
 
 // 404 Handler for API routes
 app.use((req, res, next) => {

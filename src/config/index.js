@@ -4,23 +4,24 @@ import { z } from 'zod';
 dotenv.config();
 
 const envSchema = z.object({
-  PORT: z.string().default('3000').transform(Number),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  DATABASE_URL: z.string().url(),
+  PORT: z.coerce.number().default(3000),
+  NODE_ENV: z.string().default('development'),
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   CORS_ORIGIN: z.string().default('*'),
-  RATE_LIMIT_WINDOW_MS: z.string().default('60000').transform(Number),
-  RATE_LIMIT_MAX: z.string().default('100').transform(Number),
-  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60000),
+  RATE_LIMIT_MAX: z.coerce.number().default(100),
+  LOG_LEVEL: z.string().default('info'),
   GEMINI_API_KEY: z.string().optional().default(''),
-  GEMINI_MODEL: z.string().optional().default('gemini-flash-latest')
+  GEMINI_MODEL: z.string().optional().default('gemini-flash-lite-latest')
 });
 
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
-  console.error('Invalid environment variables:\n', _env.error.format());
+  console.error('Invalid environment variables:\n', JSON.stringify(_env.error.format(), null, 2));
   process.exit(1);
 }
+
 
 const config = {
   port: _env.data.PORT,

@@ -44,10 +44,11 @@ const startServer = async () => {
       logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode.`);
     });
   } catch (error) {
-    logger.error(`Failed to start server: ${error.message}`);
+    logger.error(`Failed to start server: ${error.message}\n${error.stack}`);
     process.exit(1);
   }
 };
+
 
 const exitHandler = () => {
   if (server) {

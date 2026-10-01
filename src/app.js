@@ -26,24 +26,25 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 // API Routes
 app.use('/api/v1', routes);
 
+import fs from 'fs';
+
 // Serve Frontend (Vite React Build) if present
 const clientDistPath = path.resolve(process.cwd(), 'client', 'dist');
-import('fs').then((fs) => {
-  if (fs.existsSync(clientDistPath)) {
-    app.use(express.static(clientDistPath));
-    app.get('*', (req, res, next) => {
-      if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
-        return next();
-      }
-      res.sendFile(path.join(clientDistPath, 'index.html'));
-    });
-  }
-});
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+      return res.sendFile(path.join(clientDistPath, 'index.html'));
+    }
+    next();
+  });
+}
 
 // 404 Handler for API routes
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
 
 
 // Global Error Handler
